@@ -39,9 +39,11 @@ public class VideoGames {
 		public String description; //VERY LONG description of the entire game. Like, the entire wiki on it
 		@SerializedName("id")
 		public int game_id; //The game ID. and integer. IE, 13053
-		public String name; //Name of the game, IE Final Fantasy 7
+		@SerializedName("name")
+		public String game_name; //Name of the game, IE Final Fantasy 7
 		public int number_of_user_reviews; //int, IE 25
 		public String original_release_date; //Date game was released, In this format:  1997-01-31 00:00:00
+		public String resource_type; //What the result from the server is. IE, game, franchise, concept, location, video.
 
 		@SerializedName("image")
 		public ImageClass game_image; //This class houses the strings for the links for the images of the games
