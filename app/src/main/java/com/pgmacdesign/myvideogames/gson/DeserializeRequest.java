@@ -10,9 +10,7 @@ This class utilizes GSON to deserialize a JSON request using the VideoGames clas
 public class DeserializeRequest {
 
 	//Returns a VideoGames object after deserializing the data. @Params, The JSON String to be deserialized
-	public static VideoGames deserializeTheJSON(String JSONString){
-		//Create a videogames object to be returned and initialize it.
-		VideoGames videoGames = new VideoGames();
+	public static VideoGames deserializeTheJSON(VideoGames videoGames, String JSONString){
 
 		//GSON object to assist with deserialization
 		GsonBuilder gsonBuilder = new GsonBuilder();

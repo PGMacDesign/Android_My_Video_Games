@@ -1,57 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:orientation="horizontal"
-                android:id="@+id/linear1"
-                android:weightSum="100"
-                android:layout_height="80dp">
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_weight="20"
-        android:id="@+id/linear2"
-        android:layout_height="fill_parent">
-
-        <ImageView
-            android:layout_width="fill_parent"
-            android:src="@drawable/ic_launcher"
-            android:gravity="center_vertical"
-            android:layout_gravity="center"
-            android:layout_height="fill_parent"/>
-
-        </LinearLayout>
+              android:layout_width="match_parent"
+              android:orientation="horizontal"
+              android:id="@+id/add_game_linear1"
+              android:weightSum="100"
+              android:layout_height="80dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_weight="30"
-        android:id="@+id/linear3"
+        android:id="@+id/add_game_linear3"
         android:layout_height="fill_parent">
 
         <TextView
             android:layout_width="fill_parent"
             android:text="Final Fantasy 7"
+            android:id="@+id/add_game_name"
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:layout_height="fill_parent"/>
-        </LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_weight="25"
-        android:id="@+id/linear4"
+        android:id="@+id/add_game_linear4"
         android:layout_height="fill_parent">
 
         <TextView
             android:layout_width="fill_parent"
             android:text="Playstation 1"
+            android:id="@+id/add_game_console"
             android:gravity="center_vertical"
             android:layout_gravity="center"
             android:layout_height="fill_parent"/>
-        </LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:id="@+id/linear_changing"
+        android:id="@+id/add_game_linear5"
         android:orientation="horizontal"
         android:layout_weight="35"
         android:layout_height="fill_parent">
@@ -62,6 +49,6 @@
         -->
 
 
-        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

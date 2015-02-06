@@ -1,5 +1,7 @@
 package com.pgmacdesign.myvideogames;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -15,10 +17,16 @@ existing ones and view more details about them
  */
 public class ListGamesActivity extends ActionBarActivity {
 
+	//Fragment manager manages the respective fragments being opened, hidden, closed, etc
+	FragmentManager manager;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.custom_list_view);
+		setContentView(R.layout.empty_activity);
+
+		manager = getFragmentManager();
+
 
 		/*
 		if (savedInstanceState == null) {
@@ -43,6 +51,15 @@ public class ListGamesActivity extends ActionBarActivity {
 
 		//noinspection SimplifiableIfStatement
 		if (id == R.id.add_new_game) {
+
+			/*
+			This creates a new transaction, opens up a new fragment, covering up the one on screen
+			and opens up one where the user can add a new game to the list
+			 */
+			AddNewGameFragment addNewGameFragment = new AddNewGameFragment();
+			FragmentTransaction transaction = manager.beginTransaction();
+			transaction.add(R.id.empty_view, addNewGameFragment, "add");
+			transaction.commit();
 			return true;
 		}
 
@@ -60,7 +77,7 @@ public class ListGamesActivity extends ActionBarActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 		                         Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+			View rootView = inflater.inflate(R.layout.activity_main, container, false);
 			return rootView;
 		}
 	}
