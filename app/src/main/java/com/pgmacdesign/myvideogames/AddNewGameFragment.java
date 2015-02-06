@@ -189,6 +189,9 @@ public class AddNewGameFragment extends Fragment{
 						//Set it equal to the global object so we can access it in the onItemClickListener
 						videoGames_search_object = search_videogames;
 
+						//need to now update the listview with the new info. reference the video games object above
+						userMakesChoice(search_videogames, async_console_name);
+
 					}
 				}, new Response.ErrorListener() {
 					public void onErrorResponse(VolleyError error) {
@@ -221,8 +224,7 @@ public class AddNewGameFragment extends Fragment{
 
 		// can use UI thread here
 		protected void onPostExecute(final Void unused) {
-			//need to now update the listview with the new info. reference the video games object above
-			userMakesChoice(videoGames_search_object, async_console_name);
+
 		}
 	}//AsyncTask
 
@@ -278,7 +280,7 @@ public class AddNewGameFragment extends Fragment{
 
 		//Just in case...
 		if (search_game_list.size() == 0){
-			search_game_list.add("Oops! No results turned up! Try entering in the console name differently (IE Playstation 1 instead of Playstation)");
+			search_game_list.add("Oops! No results turned up! Try entering in the console name differently (IE Playstation instead of Playstation 1)");
 			search_game_list_id.add(-1);
 		}
 
@@ -297,6 +299,8 @@ public class AddNewGameFragment extends Fragment{
 
 				//Position chosen will match the position of the lists created above.
 				int gameID = search_game_list_id.get(position);
+
+				Log.d("ID Chosen", Integer.toString(gameID));
 
 				//If ID is -1, then they clicked on the "oops" error, skip it
 				if (gameID == -1){
@@ -387,6 +391,9 @@ for the addition to the database, and then run switch back to the ListGamesActiv
 
 		// can use UI thread here
 		protected void onPostExecute(final Void unused) {
+
+
+
 
 			//Put data into the database
 			try {
