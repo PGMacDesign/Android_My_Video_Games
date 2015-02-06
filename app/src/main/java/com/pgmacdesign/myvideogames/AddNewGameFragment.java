@@ -40,6 +40,9 @@ public class AddNewGameFragment extends Fragment{
 	//Long returned when passing into the database. If it returns with -1, the insert did not go through
 	long returned_int;
 
+	//ListGames Activity --TESTING
+	ListGamesActivity listGamesActivity = new ListGamesActivity();
+
 	/*
 	2 Different video games objects. The first is to hold data from when a videogame is searched for
 	and the parsed data is the search results. The second is the object that will be returned once
@@ -477,11 +480,6 @@ for the addition to the database, and then run switch back to the ListGamesActiv
 		//if it returns -1 at the end, database put was not successful.
 		long success_or_not = -1;
 
-		/*
-		Normally here we would use the query to check if the item already exists and if it does,
-		to update it instead of adding another row, but for simplicity here, we will leave that out
-		*/
-
 		//Create a list of all the data to input into the database from the VideoGames Object
 		String db_game_id = Integer.toString(videogames_database_info.results[0].game_id);
 		String db_aliases = videogames_database_info.results[0].aliases;
@@ -502,6 +500,7 @@ for the addition to the database, and then run switch back to the ListGamesActiv
 
 		//Add the data to a list
 		List<String> input_data = new ArrayList<>();
+
 		input_data.add(db_game_id);
 		input_data.add(db_aliases);
 		input_data.add(db_deck);
@@ -516,6 +515,8 @@ for the addition to the database, and then run switch back to the ListGamesActiv
 		input_data.add(db_original_release_date);
 		input_data.add(db_platform_name);
 		input_data.add(db_platform_abbreviation);
+		input_data.add("false"); //Have they played it yet, new game, so no
+		input_data.add("0"); //Current rating, not rated yet (It can be changed in the ratings activity)
 
 		//Create a database object
 		TheDatabase db = new TheDatabase(getActivity());
@@ -523,10 +524,10 @@ for the addition to the database, and then run switch back to the ListGamesActiv
 		try {
 			//Pass in the list to update the database
 			success_or_not = db.insertData(input_data);
-			Log.d("Database data updated ", "successfully");
+			Log.d("Database ", "updated successfully");
 		} catch (Exception e){
 			e.printStackTrace();
-			Log.d("Database data update ", "failed");
+			Log.d("Database ", "update failed");
 		}
 
 		try {

@@ -25,12 +25,20 @@
         </activity>
 
         <activity android:name=".ListGamesActivity"
-                  android:label="List Games Activity"
-                  />
+                  android:label="List Games Activity">
+
+                <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.pgmacdesign.myvideogames.MainActivity" />
+                </activity>
 
         <activity android:name=".RateGamesActivity"
-                  android:label="Rate Games Activity"
-                  />
+                  android:label="Rate Games Activity" >
+
+                <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.pgmacdesign.myvideogames.MainActivity" />
+                </activity>
 
 
 

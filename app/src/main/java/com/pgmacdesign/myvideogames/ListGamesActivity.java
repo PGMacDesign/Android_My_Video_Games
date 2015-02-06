@@ -2,14 +2,13 @@ package com.pgmacdesign.myvideogames;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ListView;
 
 /*
 This class will list the user's games. They can scroll through them, add news ones, or click on
@@ -19,24 +18,53 @@ public class ListGamesActivity extends ActionBarActivity {
 
 	//Fragment manager manages the respective fragments being opened, hidden, closed, etc
 	FragmentManager manager;
+	//ListView that holds game details
+	ListView listView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d("OnCreate", " Called");
 		setContentView(R.layout.empty_activity);
 
+		ActionBarActivity actionBar = new ActionBarActivity();
+
+		actionBar.getSupportActionBar();
+
+		//Fragment manager
 		manager = getFragmentManager();
 
+		//Manages the backstack changes, useful for if they accidentally click back
+		getFragmentManager().addOnBackStackChangedListener(getListener());
 
-		/*
-		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container_main, new PlaceholderFragment())
-					.commit();
-		}
-		*/
+		ListFragment list_fragment = new ListFragment();
+		FragmentTransaction transaction = manager.beginTransaction();
+		//Adding the bundle in to determine which items will be listed at the end of the listview
+		Bundle bundle = new Bundle();
+		bundle.putString("last_field_option", "Rate");
+		list_fragment.setArguments(bundle);
+		transaction.add(R.id.empty_view, list_fragment, "list");
+		transaction.addToBackStack("backstack");
+		transaction.commit();
+
 	}
 
+	//This class is called whenever the backstack is changed. primarily used to handle the back button being hit
+	private FragmentManager.OnBackStackChangedListener getListener(){
+		FragmentManager.OnBackStackChangedListener result = new FragmentManager.OnBackStackChangedListener() {
+			public void onBackStackChanged() {
+				ListFragment list_fragment = new ListFragment();
+				//Adding the bundle in to determine which items will be listed at the end of the listview
+				Bundle bundle = new Bundle();
+				bundle.putString("last_field_option", "Rate");
+				list_fragment.setArguments(bundle);
+				FragmentTransaction transaction = manager.beginTransaction();
+				transaction.replace(R.id.empty_view, list_fragment, "list");
+				transaction.commit();
+			}
+		};
+		return result;
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -51,35 +79,26 @@ public class ListGamesActivity extends ActionBarActivity {
 
 		//noinspection SimplifiableIfStatement
 		if (id == R.id.add_new_game) {
-
 			/*
 			This creates a new transaction, opens up a new fragment, covering up the one on screen
 			and opens up one where the user can add a new game to the list
 			 */
 			AddNewGameFragment addNewGameFragment = new AddNewGameFragment();
 			FragmentTransaction transaction = manager.beginTransaction();
-			transaction.add(R.id.empty_view, addNewGameFragment, "add");
+			transaction.replace(R.id.empty_view, addNewGameFragment, "list");
 			transaction.addToBackStack("backstack");
 			transaction.commit();
 			return true;
 		}
 
+		if (id == R.id.home) {
+			// app icon in action bar clicked; go home
+			Intent intent = new Intent(this, MainActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+			return true;
+		}
+
 		return super.onOptionsItemSelected(item);
-	}
-
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class PlaceholderFragment extends Fragment {
-
-		public PlaceholderFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-		                         Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.activity_main, container, false);
-			return rootView;
-		}
 	}
 }

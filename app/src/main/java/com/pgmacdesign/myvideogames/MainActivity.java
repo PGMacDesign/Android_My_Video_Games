@@ -30,6 +30,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 	private void checkIfDBExists() {
 		TheDatabase db = new TheDatabase(this);
 		db.open();
+		db.checkIfDBIsEmpty(this);
 		db.close();
 	}
 

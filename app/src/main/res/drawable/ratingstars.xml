@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--This was going to originally be a custom rating bar but I ran out of time -->
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/background"
+          android:drawable="@drawable/rating_star_unchecked" />
+    <item android:id="@+id/progress"
+          android:drawable="@drawable/rating_star_checked" />
+</layer-list>

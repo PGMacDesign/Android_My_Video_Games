@@ -27,15 +27,41 @@ public class TheDatabase {
 		helper = new DatabaseHelper(context);
 	}
 
-	//Returns a long to determine if the insert was successful
-	public long insertData(List<String> newData){
-		//Creates an object of the SQLiteDatabase itself and then opens / creates a writeable database
-		SQLiteDatabase db = helper.getWritableDatabase(); //This returns a database object
+	//This class checks if the database is empty. If it is, it adds a few bogus values
+	public void checkIfDBIsEmpty(Context context){
 
-		//Create a content values object to help put data in
+		//List to determine size of returned data
+		List<String> temp_list = new ArrayList<>();
+		//Fill the list
+		temp_list = getAllGameIDs();
+
+		//If it is empty, add values, else, move onward
+		if (temp_list.size() == 0){
+			//Nothing in the database, need to add some fictitious files.
+			List<String> list1 = new ArrayList<>();
+				//Fill list 1
+				list1.add("");
+				list1.add("");
+			List<String> list2 = new ArrayList<>();
+			List<String> list3 = new ArrayList<>();
+
+			insertData()
+		}
+
+	}
+
+	//Returns long to determine if the update was successful. Updates an entire row.
+	//Pass in the game ID and a list of all the values to update. Note, values muse be
+	//in order matching contentValues list here.
+	public long updateRow(String gameID, List <String> newData){
+
+		//Creating an SQL database by referencing the adapter,
+		//which references the helper object, which opens the database
+		SQLiteDatabase db = helper.getWritableDatabase();
+
+		//Content values for passing in data
 		ContentValues contentValues = new ContentValues();
 
-		//Put data. Parameters are Key, Value
 		//Put the values into the content values so that it can update
 		contentValues.put(helper.COLUMN_GAME_ID,  newData.get(0));
 		contentValues.put(helper.COLUMN_ALIASES,  newData.get(1));
@@ -54,6 +80,96 @@ public class TheDatabase {
 		contentValues.put(helper.COLUMN_PLATFORM_NAME,  newData.get(12));
 		contentValues.put(helper.COLUMN_PLATFORM_ABBREVIATION,  newData.get(13));
 
+		contentValues.put(helper.COLUMN_PLAYED_CHECKBOX,  newData.get(14));
+		contentValues.put(helper.COLUMN_RATING,  newData.get(15));
+
+		//The last parameter in update needs a string array, not a string, so creating the array here
+		String[] whereArgs = {gameID};
+
+		//Update. Follows the command: UPDATE TABLE SET NAME = "" WHERE NAME = ?
+		//Returns a count of how many rows were updated
+		int count = db.update(helper.TABLE_NAME, contentValues, helper.COLUMN_GAME_ID + " =?", whereArgs);
+		return count;
+
+	}
+
+	//Returns a long to determine if the insert was successful, updates the COLUMN_PLAYED_CHECKBOX
+	//Pass in the game ID and a string to update the played checkbox
+	public long updatePlayedCheckbox(String gameID, String value){
+
+		//Creating an SQL database by referencing the adapter,
+		//which references the helper object, which opens the database
+		SQLiteDatabase db = helper.getWritableDatabase();
+
+		//Content values for passing in data
+		ContentValues contentValues = new ContentValues();
+		contentValues.put(helper.COLUMN_PLAYED_CHECKBOX,  value);
+
+		//The last parameter in update needs a string array, not a string, so creating the array here
+		String[] whereArgs = {gameID};
+
+		//Update. Follows the command: UPDATE TABLE SET NAME = "" WHERE NAME = ?
+		//Returns a count of how many rows were updated
+		int count = db.update(helper.TABLE_NAME, contentValues, helper.COLUMN_GAME_ID + " =?", whereArgs);
+		return count;
+
+	}
+
+	//Returns a long to determine if the insert was successful, updates the COLUMN_RATING
+	//Pass in the game ID and a float to update the rating.
+	public long updateRating(String gameID, float value){
+
+		//Creating an SQL database by referencing the adapter,
+		//which references the helper object, which opens the database
+		SQLiteDatabase db = helper.getWritableDatabase();
+
+		//Content values for passing in data
+		ContentValues contentValues = new ContentValues();
+
+		//Put the values into the content values so that it can update
+		contentValues.put(helper.COLUMN_RATING,  Float.toString(value));
+
+		//The last parameter in update needs a string array, not a string, so creating the array here
+		String[] whereArgs = {gameID};
+
+		//Update. Follows the command: UPDATE TABLE SET NAME = "" WHERE NAME = ?
+		//Returns a count of how many rows were updated
+		int count = db.update(helper.TABLE_NAME, contentValues, helper.COLUMN_GAME_ID + " =?", whereArgs);
+		return count;
+	}
+
+
+	//Returns a long to determine if the insert was successful
+	//Pass a list of all the values to update. Note, values muse be
+	//in order matching contentValues list here.
+	public long insertData(List<String> newData){
+		//Creates an object of the SQLiteDatabase itself and then opens / creates a writeable database
+		SQLiteDatabase db = helper.getWritableDatabase(); //This returns a database object
+
+		//Create a content values object to help put data in
+		ContentValues contentValues = new ContentValues();
+
+		//Put the values into the content values so that it can update
+		contentValues.put(helper.COLUMN_GAME_ID,  newData.get(0));
+		contentValues.put(helper.COLUMN_ALIASES,  newData.get(1));
+		contentValues.put(helper.COLUMN_DECK,  newData.get(2));
+		contentValues.put(helper.COLUMN_ICON_URL,  newData.get(3));
+		contentValues.put(helper.COLUMN_MEDIUM_URL,  newData.get(4));
+
+		contentValues.put(helper.COLUMN_SCREEN_URL,  newData.get(5));
+		contentValues.put(helper.COLUMN_SMALL_URL,  newData.get(6));
+		contentValues.put(helper.COLUMN_SUPER_URL,  newData.get(7));
+		contentValues.put(helper.COLUMN_THUMB_URL,  newData.get(8));
+		contentValues.put(helper.COLUMN_TINY_URL,  newData.get(9));
+
+		contentValues.put(helper.COLUMN_NAME,  newData.get(10));
+		contentValues.put(helper.COLUMN_ORIGINAL_RELEASE_DATE,  newData.get(11));
+		contentValues.put(helper.COLUMN_PLATFORM_NAME,  newData.get(12));
+		contentValues.put(helper.COLUMN_PLATFORM_ABBREVIATION,  newData.get(13));
+
+		contentValues.put(helper.COLUMN_PLAYED_CHECKBOX,  newData.get(14));
+		contentValues.put(helper.COLUMN_RATING,  newData.get(15));
+
 		//Put the data into the database itself
 		long result = db.insert(helper.TABLE_NAME, null, contentValues);
 
@@ -61,8 +177,39 @@ public class TheDatabase {
 
 	}
 
-	//Returns ALL of the data in the database via via a list for the listView
-	public List<String> getAllTableData(){
+	//Returns ALL of the game IDs from the database (One column)
+	public List<String> getAllGameIDs(){
+		//First make the object
+		SQLiteDatabase db = helper.getWritableDatabase();
+
+		//Cursor object for traversing the results of the database
+		Cursor cursor;
+
+		//Create a string array of data
+		String[] columns = {helper.COLUMN_GAME_ID};
+
+		//Query the database. Third param is the search params, null returns ALL
+		//This returns a cursor object
+		cursor = db.query(DatabaseHelper.TABLE_NAME, columns, null, null, null, null, null); //May need to add more Null arguments
+
+		//A List to hold the pulled data
+		List<String> pulled_data = new ArrayList<>();
+
+		//While the cursor can move to the next (while there are more rows)
+		while(cursor.moveToNext()){
+
+			//Integer is retrieving column number where the name is
+			int index0 = cursor.getColumnIndex(DatabaseHelper.COLUMN_GAME_ID);
+			//Get the String from the column Name
+			String str0 = cursor.getString(index0);
+			pulled_data.add(str0);
+		}
+		//List of all the game IDs
+		return pulled_data;
+	}
+
+	//Returns some of the data in the database via a list for the listView.
+	public List<String> getSomeTableData(){
 		//First make the object
 		SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -72,6 +219,7 @@ public class TheDatabase {
 		//Create a string array of data
 		String[] columns = {helper.COLUMN_GAME_ID, helper.COLUMN_DECK,
 				helper.COLUMN_THUMB_URL, helper.COLUMN_NAME,
+				helper.COLUMN_PLAYED_CHECKBOX, helper.COLUMN_RATING
 		};
 
 		//Query the database. Third param is the search params, null returns ALL
@@ -98,10 +246,18 @@ public class TheDatabase {
 			int index10 = cursor.getColumnIndex(DatabaseHelper.COLUMN_NAME);
 			String str10 = cursor.getString(index10);
 
+			int index14 = cursor.getColumnIndex(DatabaseHelper.COLUMN_PLAYED_CHECKBOX);
+			String str14 = cursor.getString(index14);
+
+			int index15 = cursor.getColumnIndex(DatabaseHelper.COLUMN_RATING);
+			String str15 = cursor.getString(index15);
+
 			pulled_data.add(str0);
 			pulled_data.add(str2);
 			pulled_data.add(str8);
 			pulled_data.add(str10);
+			pulled_data.add(str14);
+			pulled_data.add(str15);
 		}
 
 		return pulled_data;
@@ -120,7 +276,8 @@ public class TheDatabase {
 				helper.COLUMN_ICON_URL, helper.COLUMN_MEDIUM_URL, helper.COLUMN_SCREEN_URL,
 				helper.COLUMN_SMALL_URL, helper.COLUMN_SUPER_URL, helper.COLUMN_THUMB_URL,
 				helper.COLUMN_TINY_URL, helper.COLUMN_NAME, helper.COLUMN_ORIGINAL_RELEASE_DATE,
-				helper.COLUMN_PLATFORM_NAME, helper.COLUMN_PLATFORM_ABBREVIATION
+				helper.COLUMN_PLATFORM_NAME, helper.COLUMN_PLATFORM_ABBREVIATION,
+				helper.COLUMN_PLAYED_CHECKBOX, helper.COLUMN_RATING
 		};
 
 		//Query the database. Third param are the search params. This returns a cursor object
@@ -163,6 +320,10 @@ public class TheDatabase {
 			String str12 = cursor.getString(index12);
 			int index13 = cursor.getColumnIndex(DatabaseHelper.COLUMN_PLATFORM_ABBREVIATION);
 			String str13 = cursor.getString(index13);
+			int index14 = cursor.getColumnIndex(DatabaseHelper.COLUMN_PLAYED_CHECKBOX);
+			String str14 = cursor.getString(index14);
+			int index15 = cursor.getColumnIndex(DatabaseHelper.COLUMN_RATING);
+			String str15 = cursor.getString(index15);
 
 			pulled_data.add(str0);
 			pulled_data.add(str1);
@@ -178,16 +339,12 @@ public class TheDatabase {
 			pulled_data.add(str11);
 			pulled_data.add(str12);
 			pulled_data.add(str13);
+			pulled_data.add(str14);
+			pulled_data.add(str15);
 
 		}
 
 		return pulled_data;
-	}
-
-	//Updates a name in the database. Leaving this out for now as there is no update option
-	public int updateRow(String widget_id, List<String> newData){
-			int count = 1;
-			return count;
 	}
 
 	//Deletes a row in the database by the game_id is being passed in
@@ -223,7 +380,7 @@ public class TheDatabase {
 		//Standard variables for the database functions
 		private static final String DATABASE_NAME = "videogamesdb";
 		private static final String TABLE_NAME = "videogamestable";
-		private static final int DATBASE_VERSION = 1;
+		private static final int DATBASE_VERSION = 2;
 		private static final String DROP_TABLE = "DROP TABLE IF EXISTS "+ TABLE_NAME;
 
 		//Columns to store data
@@ -256,6 +413,10 @@ public class TheDatabase {
 		public static final String COLUMN_PLATFORM_NAME = "platform_name";
 		// Stored as a String, the platform name abbreviation (IE PS1)
 		public static final String COLUMN_PLATFORM_ABBREVIATION = "platform_abbreviation";
+		// Stored as a boolean, checkbox for whether or not they have played it
+		public static final String COLUMN_PLAYED_CHECKBOX = "played_checkbox";
+		// Stored as a String, rating system using the android 'star' picker
+		public static final String COLUMN_RATING = "rating";
 
 		private Context context; //In case we need context
 
@@ -274,7 +435,9 @@ public class TheDatabase {
 				+ COLUMN_NAME + " VARCHAR(255),"
 				+ COLUMN_ORIGINAL_RELEASE_DATE + " VARCHAR(255),"
 				+ COLUMN_PLATFORM_NAME + " VARCHAR(255),"
-				+ COLUMN_PLATFORM_ABBREVIATION + " VARCHAR(255)"
+				+ COLUMN_PLATFORM_ABBREVIATION + " VARCHAR(255),"
+				+ COLUMN_PLAYED_CHECKBOX + " VARCHAR(255),"
+				+ COLUMN_RATING + " VARCHAR(255)"
 				+");";
 
 		//Constructor

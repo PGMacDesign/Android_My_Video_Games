@@ -15,6 +15,7 @@
         <ImageView
             android:layout_width="fill_parent"
             android:src="@drawable/ic_launcher"
+            android:id="@+id/custom_list_view_image"
             android:gravity="center_vertical"
             android:layout_gravity="center"
             android:layout_height="fill_parent"/>
@@ -30,6 +31,7 @@
         <TextView
             android:layout_width="fill_parent"
             android:text="Final Fantasy 7"
+            android:id="@+id/custom_list_view_game_name"
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:layout_height="fill_parent"/>
@@ -44,6 +46,7 @@
         <TextView
             android:layout_width="fill_parent"
             android:text="Playstation 1"
+            android:id="@+id/custom_list_view_console"
             android:gravity="center_vertical"
             android:layout_gravity="center"
             android:layout_height="fill_parent"/>
