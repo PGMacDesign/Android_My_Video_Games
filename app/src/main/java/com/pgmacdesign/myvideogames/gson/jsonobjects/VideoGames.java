@@ -30,7 +30,7 @@ public class VideoGames {
 	 Main JSON object node that holds the majority of the data. Strings match the JSON API return data
 	 from the website (http://www.giantbomb.com/). This data will be parsed in using GSON to hold the data.
 	 */
-	static class Results {
+	public static class Results {
 		public String aliases; //Game may be called something else (IE Final Fantasy 7, may also be FF7 or FFVII)
 		public String api_detail_url; //URL for the game in their api
 		public String date_added; //Date when added to their API, NOT the release date. in format: 2008-04-01 16:07:06
@@ -51,7 +51,7 @@ public class VideoGames {
 	}
 
 	//This class houses the strings for the links for the images of the games
-	static class ImageClass {
+	public static class ImageClass {
 		public String icon_url;
 		public String medium_url;
 		public String screen_url;
@@ -62,7 +62,7 @@ public class VideoGames {
 	}
 
 	//The different platforms the game is on(IE: PS1, PS2, SNES). It is returned as an array
-	static class Platforms {
+	public static class Platforms {
 		@SerializedName("name")
 		public String system_name; //System name, IE, Playstation or PC, or Super Nintendo
 		public String abbreviation; //Abbreviation of the system name, IE PC, PS1, PS3, SNES
