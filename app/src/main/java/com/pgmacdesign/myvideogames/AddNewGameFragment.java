@@ -21,6 +21,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.pgmacdesign.myvideogames.database.TheDatabase;
 import com.pgmacdesign.myvideogames.gson.DeserializeRequest;
 import com.pgmacdesign.myvideogames.gson.jsonobjects.VideoGames;
 import com.pgmacdesign.myvideogames.volley.VolleySingleton;
@@ -36,6 +37,8 @@ public class AddNewGameFragment extends Fragment{
 	//Button to add a new game
 	Button add_new_game;
 
+	//Long returned when passing into the database. If it returns with -1, the insert did not go through
+	long returned_int;
 
 	/*
 	2 Different video games objects. The first is to hold data from when a videogame is searched for
@@ -332,6 +335,7 @@ public class AddNewGameFragment extends Fragment{
 				} else {
 					//Get the game details from the server, set it into the list, and add it to the database
 					new SetGame(gameID, getActivity()).execute();
+					Toast.makeText(getActivity(), "Your game is being added to the list, please wait a moment", Toast.LENGTH_LONG).show();
 				}
 			}
 		});
@@ -418,39 +422,119 @@ for the addition to the database, and then run switch back to the ListGamesActiv
 
 
 
+			Handler handler2 = new Handler();
+			//Adds a short delay in order to allow for the internet to catch up
+			handler2.postDelayed(new Runnable() {
+				public void run() {
+					try {
 
-			//Put data into the database
-			try {
+						//Put the data into the database
+						returned_int = putDataInDatabase(async2_video_games);
 
-				//Put the data into the database
-				int returned_int = putDataInDatabase(async2_video_games);
+					} catch (NullPointerException e){
+						Toast.makeText(context, "Oops! Something went wrong! Please check your internet connection and try again",Toast.LENGTH_SHORT).show();
+						e.printStackTrace();
+					}
 
-				//Re-inflate the listview with the new data in it
-				try {
-
-				} catch (Exception e){
-
+					//
 				}
-			} catch (Exception e){
-				Toast.makeText(context, "Oops! Something went wrong! Try clicking the game name once more",Toast.LENGTH_SHORT).show();
-				e.printStackTrace();
-			}
+			}, (1000*3));
+
+			Handler handler3 = new Handler();
+			//Adds a short delay in order to allow for the internet to catch up
+			handler2.postDelayed(new Runnable() {
+				public void run() {
+					try {
+
+						if (returned_int == -1){
+							Toast.makeText(context, "Oops! Something went wrong! wait a moment and click the game title again",Toast.LENGTH_SHORT).show();
+						} else {
+							try {
+								//Launch the fragment
+								getFragmentManager().popBackStack();
+							} catch (Exception e){
+								Log.d("Could not", " Pop backstack");
+								e.printStackTrace();
+							}
+						}
+
+
+					} catch (NullPointerException e){
+						Toast.makeText(context, "Oops! Something went wrong! wait a moment and try again",Toast.LENGTH_SHORT).show();
+						e.printStackTrace();
+					}
+
+					//
+				}
+			}, (1000*6));
+
+
 		}
 	}//AsyncTask
 
 	//This class will put the data into the database. Returns the row number of the row put into
-	private int putDataInDatabase(VideoGames videogames_database_info){
+	private long putDataInDatabase(VideoGames videogames_database_info){
 		//if it returns -1 at the end, database put was not successful.
-		int success_or_not = -1;
+		long success_or_not = -1;
 
+		/*
+		Normally here we would use the query to check if the item already exists and if it does,
+		to update it instead of adding another row, but for simplicity here, we will leave that out
+		*/
 
+		//Create a list of all the data to input into the database from the VideoGames Object
+		String db_game_id = Integer.toString(videogames_database_info.results[0].game_id);
+		String db_aliases = videogames_database_info.results[0].aliases;
+		String db_deck = videogames_database_info.results[0].deck;
+		String db_icon_url = videogames_database_info.results[0].game_image.icon_url;
+		String db_medium_url = videogames_database_info.results[0].game_image.medium_url;
+		String db_screen_url = videogames_database_info.results[0].game_image.screen_url;
+		String db_small_url = videogames_database_info.results[0].game_image.small_url;
+		String db_super_url = videogames_database_info.results[0].game_image.super_url;
+		String db_thumb_url = videogames_database_info.results[0].game_image.thumb_url;
+		String db_tiny_url = videogames_database_info.results[0].game_image.tiny_url;
+		String db_name = videogames_database_info.results[0].game_name;
+		//Shortening this one as it adds seconds afterwards (semi-useless here)
+		String str = videogames_database_info.results[0].original_release_date;
+		String db_original_release_date = str.substring(0, Math.min(str.length(), 10)); //First 10 Characters
+		String db_platform_name = videogames_database_info.results[0].platforms[0].system_name;
+		String db_platform_abbreviation = videogames_database_info.results[0].platforms[0].abbreviation;
 
+		//Add the data to a list
+		List<String> input_data = new ArrayList<>();
+		input_data.add(db_game_id);
+		input_data.add(db_aliases);
+		input_data.add(db_deck);
+		input_data.add(db_icon_url);
+		input_data.add(db_medium_url);
+		input_data.add(db_screen_url);
+		input_data.add(db_small_url);
+		input_data.add(db_super_url);
+		input_data.add(db_thumb_url);
+		input_data.add(db_tiny_url);
+		input_data.add(db_name);
+		input_data.add(db_original_release_date);
+		input_data.add(db_platform_name);
+		input_data.add(db_platform_abbreviation);
 
+		//Create a database object
+		TheDatabase db = new TheDatabase(getActivity());
 
+		try {
+			//Pass in the list to update the database
+			success_or_not = db.insertData(input_data);
+			Log.d("Database data updated ", "successfully");
+		} catch (Exception e){
+			e.printStackTrace();
+			Log.d("Database data update ", "failed");
+		}
 
-
-
-
+		try {
+			//Finally, close the db to prevent memory leaks
+			db.close();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 
 		return success_or_not;
 	}

@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.pgmacdesign.myvideogames.database.TheDatabase;
+
 /*
 The Main activity, will allow users to choose between 2 options, going to the ListGamesActivity or
 to the RateGamesActivity. There will be NO action bar on purpose.
@@ -21,6 +23,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 		setContentView(R.layout.activity_main);
 		//Initialize any and all variables / views / buttons needed
 		Initialize();
+		checkIfDBExists();
+	}
+
+	//Checks to see if the database has been created. If not, creates it
+	private void checkIfDBExists() {
+		TheDatabase db = new TheDatabase(this);
+		db.open();
+		db.close();
 	}
 
 	private void Initialize() {

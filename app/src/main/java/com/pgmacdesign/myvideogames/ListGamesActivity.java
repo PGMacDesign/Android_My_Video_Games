@@ -59,6 +59,7 @@ public class ListGamesActivity extends ActionBarActivity {
 			AddNewGameFragment addNewGameFragment = new AddNewGameFragment();
 			FragmentTransaction transaction = manager.beginTransaction();
 			transaction.add(R.id.empty_view, addNewGameFragment, "add");
+			transaction.addToBackStack("backstack");
 			transaction.commit();
 			return true;
 		}
