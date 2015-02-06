@@ -18,12 +18,15 @@ public class ListGamesActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.custom_list_view);
+
+		/*
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment())
+					.add(R.id.container_main, new PlaceholderFragment())
 					.commit();
 		}
+		*/
 	}
 
 
