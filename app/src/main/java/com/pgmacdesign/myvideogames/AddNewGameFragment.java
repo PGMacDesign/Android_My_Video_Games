@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ public class AddNewGameFragment extends Fragment{
 
 	//Button to add a new game
 	Button add_new_game;
+
 
 	/*
 	2 Different video games objects. The first is to hold data from when a videogame is searched for
@@ -66,6 +68,10 @@ public class AddNewGameFragment extends Fragment{
 		this.add_new_game.setOnClickListener(new View.OnClickListener() {
 			//This will take the input data and search the web for the respective game
 			public void onClick(View v) {
+				//Disables the button in case they click it multiple times
+				add_new_game.setEnabled(false);
+
+				Toast.makeText(getActivity(), "Loading your results now, please be patient...", Toast.LENGTH_LONG).show();
 
 				String game_name = edit_text_game_name.getText().toString();
 				String console_name = edit_text_console_name.getText().toString();
@@ -190,7 +196,7 @@ public class AddNewGameFragment extends Fragment{
 						videoGames_search_object = search_videogames;
 
 						//need to now update the listview with the new info. reference the video games object above
-						userMakesChoice(search_videogames, async_console_name);
+						//userMakesChoice(search_videogames, async_console_name);
 
 					}
 				}, new Response.ErrorListener() {
@@ -224,6 +230,24 @@ public class AddNewGameFragment extends Fragment{
 
 		// can use UI thread here
 		protected void onPostExecute(final Void unused) {
+
+			Handler handler = new Handler();
+			//Adds a short delay in order to allow for the internet to catch up
+			handler.postDelayed(new Runnable() {
+				public void run() {
+					try {
+						//Re-enable the button
+						add_new_game.setEnabled(true);
+						//need to now update the listview with the new info. reference the video games object above
+						userMakesChoice(search_videogames, async_console_name);
+					} catch (NullPointerException e){
+						Toast.makeText(context, "Oops! Something went wrong! Please check your internet connection and try again",Toast.LENGTH_SHORT).show();
+						e.printStackTrace();
+					}
+
+					//
+				}
+			}, (1000*5));
 
 		}
 	}//AsyncTask
