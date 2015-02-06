@@ -4,6 +4,7 @@
     <string name="app_name">My Video Games</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="add_game">Add New Game</string>
     <string name="video_game_api_key">9be0ead91d814eeb64cc5fb0da481ce726a22400</string>
 
 </resources>
