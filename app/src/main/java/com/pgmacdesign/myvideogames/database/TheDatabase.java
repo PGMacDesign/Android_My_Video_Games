@@ -35,18 +35,78 @@ public class TheDatabase {
 		//Fill the list
 		temp_list = getAllGameIDs();
 
+		Log.d("Number of Rows in Database : ", Integer.toString(temp_list.size()));
+
 		//If it is empty, add values, else, move onward
 		if (temp_list.size() == 0){
 			//Nothing in the database, need to add some fictitious files.
-			List<String> list1 = new ArrayList<>();
-				//Fill list 1
-				list1.add("");
-				list1.add("");
-			List<String> list2 = new ArrayList<>();
-			List<String> list3 = new ArrayList<>();
 
-			insertData()
+			List<String> list1 = new ArrayList<>();
+			//Fill list 1
+			list1.add("13053");
+			list1.add("FFVII");
+			list1.add("A young man's quest to defeat a corrupt corporation he once served and exact revenge upon the man who wronged him, " +
+					"uncovering dark secrets about his past along the way, in the most celebrated console RPG of all time. " +
+					"It popularized the RPG genre and was a killer app for the PlayStation console.");
+			list1.add("http://static.giantbomb.com/uploads/square_avatar/8/87790/1814630-box_ff7.png");
+			list1.add("http://static.giantbomb.com/uploads/scale_medium/8/87790/1814630-box_ff7.png");
+			list1.add("http://static.giantbomb.com/uploads/scale_medium/8/87790/1814630-box_ff7.png");
+			list1.add("http://static.giantbomb.com/uploads/scale_medium/8/87790/1814630-box_ff7.png");
+			list1.add("http://static.giantbomb.com/uploads/scale_medium/8/87790/1814630-box_ff7.png");
+			list1.add("http://static.giantbomb.com/uploads/scale_avatar/8/87790/1814630-box_ff7.png");
+			list1.add("http://static.giantbomb.com/uploads/scale_medium/8/87790/1814630-box_ff7.png");
+			list1.add("Final Fantasy 7");
+			list1.add("1997-01-31");
+			list1.add("Playstation");
+			list1.add("PS1");
+			list1.add("true");
+			list1.add("4");
+			insertData(list1);
+
+			List<String> list2 = new ArrayList<>();
+			//Fill list2
+			list2.add("10299");
+			list2.add("SMB3");
+			list2.add("Super Mario Bros. 3 sends Mario on a whole new adventure across diverse worlds and sporting strange new suits and abilities.");
+			list2.add("http://static.giantbomb.com/uploads/square_avatar/9/93770/2362272-nes_supermariobros3_4.jpg");
+			list2.add("http://static.giantbomb.com/uploads/scale_medium/9/93770/2362272-nes_supermariobros3_4.jpg");
+			list2.add("http://static.giantbomb.com/uploads/scale_medium/9/93770/2362272-nes_supermariobros3_4.jpg");
+			list2.add("http://static.giantbomb.com/uploads/scale_medium/9/93770/2362272-nes_supermariobros3_4.jpg");
+			list2.add("http://static.giantbomb.com/uploads/scale_medium/9/93770/2362272-nes_supermariobros3_4.jpg");
+			list2.add("http://static.giantbomb.com/uploads/scale_medium/9/93770/2362272-nes_supermariobros3_4.jpg");
+			list2.add("http://static.giantbomb.com/uploads/scale_medium/9/93770/2362272-nes_supermariobros3_4.jpg");
+			list2.add("Super Mario Bros. 3");
+			list2.add("1988-10-23");
+			list2.add("Nintendo Entertainment System");
+			list2.add("NES");
+			list2.add("false");
+			list2.add("3");
+			insertData(list2);
+
+			List<String> list3 = new ArrayList<>();
+			//Fill List 3
+			list3.add("10276");
+			list3.add("Zelda 3");
+			list3.add("The third installment in the Zelda series makes a return to the top-down 2D gameplay found in the " +
+					"first game. This time around, Link needs to travel between the light and dark world in order to set " +
+					"things straight in the kingdom of Hyrule.");
+			list3.add("http://static.giantbomb.com/uploads/square_avatar/9/93770/2363926-snes_thelegendofzeldaalinktothepast.jpg");
+			list3.add("http://static.giantbomb.com/uploads/scale_medium/9/93770/2363926-snes_thelegendofzeldaalinktothepast.jpg");
+			list3.add("http://static.giantbomb.com/uploads/scale_medium/9/93770/2363926-snes_thelegendofzeldaalinktothepast.jpg");
+			list3.add("http://static.giantbomb.com/uploads/scale_medium/9/93770/2363926-snes_thelegendofzeldaalinktothepast.jpg");
+			list3.add("http://static.giantbomb.com/uploads/scale_medium/9/93770/2363926-snes_thelegendofzeldaalinktothepast.jpg");
+			list3.add("http://static.giantbomb.com/uploads/scale_medium/9/93770/2363926-snes_thelegendofzeldaalinktothepast.jpg");
+			list3.add("http://static.giantbomb.com/uploads/scale_medium/9/93770/2363926-snes_thelegendofzeldaalinktothepast.jpg");
+			list3.add("The Legend of Zelda: A Link to the Past");
+			list3.add("1991-11-21");
+			list3.add("Super Nintendo Entertainment System");
+			list3.add("SNES");
+			list3.add("false");
+			list3.add("5");
+			insertData(list3);
+
 		}
+
 
 	}
 
@@ -372,6 +432,13 @@ public class TheDatabase {
 		helper.close();
 	}
 
+	private String formatTheBadURL(String db_icon_url) {
+		String return_url;
+		return_url = db_icon_url.replaceAll("\\\\", "");
+		Log.d("Formatted String", return_url);
+		return return_url;
+	}
+
 	/////////////////////////////////////////////////////////////////////////////////
 	//This class creates an object which extends to the database for commands
 	//It is nested to encapsulate it
@@ -380,7 +447,7 @@ public class TheDatabase {
 		//Standard variables for the database functions
 		private static final String DATABASE_NAME = "videogamesdb";
 		private static final String TABLE_NAME = "videogamestable";
-		private static final int DATBASE_VERSION = 2;
+		private static final int DATBASE_VERSION = 5;
 		private static final String DROP_TABLE = "DROP TABLE IF EXISTS "+ TABLE_NAME;
 
 		//Columns to store data

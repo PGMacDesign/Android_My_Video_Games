@@ -4,7 +4,7 @@
                 android:orientation="horizontal"
                 android:id="@+id/linear1"
                 android:weightSum="100"
-                android:layout_height="80dp">
+                android:layout_height="160dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -18,7 +18,9 @@
             android:id="@+id/custom_list_view_image"
             android:gravity="center_vertical"
             android:layout_gravity="center"
-            android:layout_height="fill_parent"/>
+            android:layout_height="fill_parent"
+            android:maxLines="100"
+            />
 
         </LinearLayout>
 
@@ -34,7 +36,10 @@
             android:id="@+id/custom_list_view_game_name"
             android:layout_gravity="center"
             android:gravity="center_vertical"
-            android:layout_height="fill_parent"/>
+            android:layout_height="fill_parent"
+            android:maxLines="100"
+            />
+
         </LinearLayout>
 
     <LinearLayout
@@ -49,7 +54,9 @@
             android:id="@+id/custom_list_view_console"
             android:gravity="center_vertical"
             android:layout_gravity="center"
-            android:layout_height="fill_parent"/>
+            android:layout_height="fill_parent"
+            android:maxLines="100"
+            />
         </LinearLayout>
 
     <LinearLayout

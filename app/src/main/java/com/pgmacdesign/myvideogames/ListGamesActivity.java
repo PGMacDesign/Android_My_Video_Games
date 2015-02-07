@@ -41,7 +41,7 @@ public class ListGamesActivity extends ActionBarActivity {
 		FragmentTransaction transaction = manager.beginTransaction();
 		//Adding the bundle in to determine which items will be listed at the end of the listview
 		Bundle bundle = new Bundle();
-		bundle.putString("last_field_option", "Rate");
+		bundle.putString("last_field_option", "List");
 		list_fragment.setArguments(bundle);
 		transaction.add(R.id.empty_view, list_fragment, "list");
 		transaction.addToBackStack("backstack");
@@ -56,7 +56,7 @@ public class ListGamesActivity extends ActionBarActivity {
 				ListFragment list_fragment = new ListFragment();
 				//Adding the bundle in to determine which items will be listed at the end of the listview
 				Bundle bundle = new Bundle();
-				bundle.putString("last_field_option", "Rate");
+				bundle.putString("last_field_option", "List");
 				list_fragment.setArguments(bundle);
 				FragmentTransaction transaction = manager.beginTransaction();
 				transaction.replace(R.id.empty_view, list_fragment, "list");
@@ -85,7 +85,7 @@ public class ListGamesActivity extends ActionBarActivity {
 			 */
 			AddNewGameFragment addNewGameFragment = new AddNewGameFragment();
 			FragmentTransaction transaction = manager.beginTransaction();
-			transaction.replace(R.id.empty_view, addNewGameFragment, "list");
+			transaction.replace(R.id.empty_view, addNewGameFragment, "List");
 			transaction.addToBackStack("backstack");
 			transaction.commit();
 			return true;

@@ -485,12 +485,19 @@ for the addition to the database, and then run switch back to the ListGamesActiv
 		String db_aliases = videogames_database_info.results[0].aliases;
 		String db_deck = videogames_database_info.results[0].deck;
 		String db_icon_url = videogames_database_info.results[0].game_image.icon_url;
+		db_icon_url = formatTheBadURL(db_icon_url);
 		String db_medium_url = videogames_database_info.results[0].game_image.medium_url;
+		db_medium_url = formatTheBadURL(db_medium_url);
 		String db_screen_url = videogames_database_info.results[0].game_image.screen_url;
+		db_screen_url = formatTheBadURL(db_screen_url);
 		String db_small_url = videogames_database_info.results[0].game_image.small_url;
+		db_small_url = formatTheBadURL(db_small_url);
 		String db_super_url = videogames_database_info.results[0].game_image.super_url;
+		db_super_url = formatTheBadURL(db_super_url);
 		String db_thumb_url = videogames_database_info.results[0].game_image.thumb_url;
+		db_thumb_url = formatTheBadURL(db_thumb_url);
 		String db_tiny_url = videogames_database_info.results[0].game_image.tiny_url;
+		db_tiny_url = formatTheBadURL(db_tiny_url);
 		String db_name = videogames_database_info.results[0].game_name;
 		//Shortening this one as it adds seconds afterwards (semi-useless here)
 		String str = videogames_database_info.results[0].original_release_date;
@@ -538,6 +545,13 @@ for the addition to the database, and then run switch back to the ListGamesActiv
 		}
 
 		return success_or_not;
+	}
+
+	private String formatTheBadURL(String db_icon_url) {
+		String return_url;
+		return_url = db_icon_url.replaceAll("\\\\", "");
+		Log.d("Formatted String", return_url);
+		return return_url;
 	}
 
 }
