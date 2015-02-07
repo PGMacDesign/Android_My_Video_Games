@@ -80,7 +80,7 @@ public class TheDatabase {
 			list2.add("Nintendo Entertainment System");
 			list2.add("NES");
 			list2.add("false");
-			list2.add("3");
+			list2.add("2");
 			insertData(list2);
 
 			List<String> list3 = new ArrayList<>();
@@ -102,7 +102,7 @@ public class TheDatabase {
 			list3.add("Super Nintendo Entertainment System");
 			list3.add("SNES");
 			list3.add("false");
-			list3.add("5");
+			list3.add("3");
 			insertData(list3);
 
 		}
@@ -447,7 +447,7 @@ public class TheDatabase {
 		//Standard variables for the database functions
 		private static final String DATABASE_NAME = "videogamesdb";
 		private static final String TABLE_NAME = "videogamestable";
-		private static final int DATBASE_VERSION = 5;
+		private static final int DATBASE_VERSION = 7;
 		private static final String DROP_TABLE = "DROP TABLE IF EXISTS "+ TABLE_NAME;
 
 		//Columns to store data
