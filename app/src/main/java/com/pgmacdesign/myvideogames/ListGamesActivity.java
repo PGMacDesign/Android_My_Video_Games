@@ -43,7 +43,7 @@ public class ListGamesActivity extends ActionBarActivity {
 		bundle.putString("last_field_option", "List");
 		list_fragment.setArguments(bundle);
 		transaction.add(R.id.empty_view, list_fragment, "list");
-		//transaction.addToBackStack("backstack");
+		transaction.addToBackStack("backstack");
 		transaction.commit();
 
 	}

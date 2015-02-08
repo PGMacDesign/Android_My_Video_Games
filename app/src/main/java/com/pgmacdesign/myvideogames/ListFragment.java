@@ -1,7 +1,9 @@
 package com.pgmacdesign.myvideogames;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pgmacdesign.myvideogames.database.TheDatabase;
 import com.squareup.picasso.Picasso;
@@ -40,9 +43,6 @@ public class ListFragment extends Fragment{
 
 	//The listview
 	ListView listView;
-
-	//Game Rating. Initialized at zero to prevent null pointers
-	int game_rating = -1;
 
 	//onCreate
 	public void onCreate(Bundle savedInstanceState) {
@@ -71,26 +71,41 @@ public class ListFragment extends Fragment{
 		//Get the row numbers by querying the database
 		passed_list_rows = main_db.getAllGameIDs();
 
-
-
-
 		//Loop through the row numbers and add ALL of the items to the list of lists
 		for (int i = 0; i < passed_list_rows.size(); i++){
 			lists_of_records.add(main_db.getRow(passed_list_rows.get(i)));
 		}
 
-
-		/*
-		for (int i = 0; i < lists_of_records.size(); i++){
-			List<String> temp_list = lists_of_records.get(i);
-			String photo_url = temp_list.get(3);
-
-		}
-		*/
-
 		//Determine the passed string via the fragment bundle
 		if (last_field_option.equalsIgnoreCase("List")){
 			Log.d("Passed String is ", "List");
+
+
+			//Check the number of records. If only 3 (Initialized by me) show delete popup
+			List<String> num_records_list = main_db.getAllGameIDs();
+			if (num_records_list.size() == 3){
+				//Dialog popup, telling them how to delete a record
+				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+							//If they hit close, it will dismiss this dialog box
+							case DialogInterface.BUTTON_NEGATIVE:
+								try {
+									dialog.dismiss();
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+								break;
+						}
+					}
+				};
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				builder.setTitle("Did you know?");
+				builder.
+						setMessage("To Delete a game from your library, simply long-press on the game platform / console").
+						setNegativeButton("Ok", dialogClickListener).
+						show();
+			}
 
 			//Determine the passed string via the fragment bundle
 		} else if (last_field_option.equalsIgnoreCase("Rate")){
@@ -230,7 +245,7 @@ public class ListFragment extends Fragment{
 				holder.tv_bottom.setGravity(Gravity.LEFT); //Set text to center so it aligns better
 				holder.ratingBar.setPadding(5, 5, 5, 5);
 
-				holder.tv_bottom.setText("Rate the game,\nthen click here");
+				holder.tv_bottom.setText("Rate your game");
 			}
 
 			//Loop through the list to see what is in it and set the different fields
@@ -255,6 +270,7 @@ public class ListFragment extends Fragment{
 				if (last_field_option.equalsIgnoreCase("List")){
 					holder.checkBox.setChecked(false);
 
+					Toast.makeText(getActivity(), "To delete a game, long-press on the console/ platform name", Toast.LENGTH_SHORT);
 					//Set the checkbox
 					String played_game = temp_list.get(14);
 					if (played_game.equalsIgnoreCase("true")){
@@ -316,6 +332,48 @@ public class ListFragment extends Fragment{
 						}
 					});
 
+					//This handles long presses. If the user long presses an icon, it will ask if they want to delete the game
+					holder.tv_console_name.setOnLongClickListener(new View.OnLongClickListener() {
+						public boolean onLongClick(View v) {
+							//Dialog popup asking if they want to delete the record
+							DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {
+									switch (which) {
+										//If they hit close, it will dismiss this dialog box
+										case DialogInterface.BUTTON_NEGATIVE:
+											try {
+												dialog.dismiss();
+											} catch (Exception e) {
+												e.printStackTrace();
+											}
+											break;
+										case DialogInterface.BUTTON_POSITIVE:
+											try {
+												//Delete the item from the database
+												List<String> temp_list2 = all_passed_data.get(position);
+												String game_id = temp_list2.get(0);
+												db.deleteRow(game_id);
+
+												//Reset the fragment to update the deleted item
+												getFragmentManager().popBackStack();
+											} catch (Exception e) {
+												e.printStackTrace();
+											}
+											break;
+									}
+								}
+							};
+							AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+							builder.setTitle("Delete Game");
+							builder.
+									setMessage("Are you sure you want to delete this game from your collection?").
+									setNegativeButton("No", dialogClickListener).
+									setPositiveButton("Yes", dialogClickListener).
+									show();
+
+							return false;
+						}
+					});
 
 				} else if (last_field_option.equalsIgnoreCase("Rate")){
 					//Get the rating on the game
@@ -357,47 +415,7 @@ public class ListFragment extends Fragment{
 						}
 					});
 				}
-
-
-
-
-				//MOVE THE ON CLICK LISTENER WITHIN THE IF STATEMENTS
-
-
-				/*
-				rowView.setOnClickListener(new View.OnClickListener() {
-
-					public void onClick(View v) {
-						Log.d("ListView", " Has been clicked at: " + position);
-
-
-						//If this is the List fragment
-						if (last_field_option.equalsIgnoreCase("List")){
-
-
-
-							//If this is the Rate fragment
-						} else if (last_field_option.equalsIgnoreCase("Rate")){
-							//This means they chose a rating, enter it into the database
-							if (game_rating != -1) {
-							} else {
-								try {
-									db.updateRating(passed_game_id, game_rating);
-								} catch (Exception e){
-									e.printStackTrace();
-								}
-								//Close the resource
-							}
-
-
-						}
-
-					}
-				});
-
-				*/
 			}
-
 
 			return rowView;
 		}

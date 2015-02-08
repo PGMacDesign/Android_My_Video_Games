@@ -28,7 +28,40 @@
         <item>The first color portable video game system was the Atari Lynx, introduced in 1989 and priced at $149.</item>
         <item>Introduced in 1993, the 3DO was the first video game system to be based entirely on CD technology</item>
         <item>The Sony PlayStation was originally intended as a CD add-on to the Super Nintendo. When licensing problems and other issues arose, Sony decided to develop the PlayStation as a machine of its own.</item>
+        <item>To get to the buried treasure you go down towards the beach and ...Squirrel!</item>
 
+    </string-array>
+
+    <string-array name="game_platforms">
+        <item>3DO</item>
+        <item>3DS</item>
+        <item>Atari</item>
+        <item>Coleco</item>
+        <item>Game Boy Advance</item>
+        <item>Game Boy Color</item>
+        <item>Game Boy</item>
+        <item>Gamecube</item>
+        <item>Nintendo 64</item>
+        <item>Nintendo DS</item>
+        <item>NES</item>
+        <item>PC</item>
+        <item>PS1</item>
+        <item>PS2</item>
+        <item>PS3</item>
+        <item>PS4</item>
+        <item>PS Vita</item>
+        <item>PSP</item>
+        <item>Sega Dreamcast</item>
+        <item>Sega Game Gear</item>
+        <item>Sega Genesis</item>
+        <item>Sega Saturn</item>
+        <item>SNES</item>
+        <item>Virtual Boy</item>
+        <item>Wii U</item>
+        <item>Wii</item>
+        <item>Xbox 360</item>
+        <item>Xbox One</item>
+        <item>Xbox</item>
     </string-array>
 
 </resources>

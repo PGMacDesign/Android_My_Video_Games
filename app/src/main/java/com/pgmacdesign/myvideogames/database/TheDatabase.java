@@ -447,7 +447,7 @@ public class TheDatabase {
 		//Standard variables for the database functions
 		private static final String DATABASE_NAME = "videogamesdb";
 		private static final String TABLE_NAME = "videogamestable";
-		private static final int DATBASE_VERSION = 8;
+		private static final int DATBASE_VERSION = 9;
 		private static final String DROP_TABLE = "DROP TABLE IF EXISTS "+ TABLE_NAME;
 
 		//Columns to store data

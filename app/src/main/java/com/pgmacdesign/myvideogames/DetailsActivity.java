@@ -61,9 +61,12 @@ public class DetailsActivity extends ActionBarActivity {
 		details_activity_description = (TextView) findViewById(R.id.details_activity_description);
 		details_activity_platform = (TextView) findViewById(R.id.details_activity_platform);
 
+		//Photo, set via the photo url in the database using Picasso
 		imageView = (ImageView) findViewById(R.id.imageView);
 
+		//Checkbox. setting it to non-clickable
 		details_activity_checkbox = (CheckBox) findViewById(R.id.details_activity_checkbox);
+		details_activity_checkbox.setClickable(false);
 
 		details_activity_ratingBar = (RatingBar) findViewById(R.id.details_activity_ratingBar);
 
