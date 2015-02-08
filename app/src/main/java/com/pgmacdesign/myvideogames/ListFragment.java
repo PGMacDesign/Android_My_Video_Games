@@ -3,6 +3,7 @@ package com.pgmacdesign.myvideogames;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -19,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pgmacdesign.myvideogames.database.TheDatabase;
 import com.squareup.picasso.Picasso;
@@ -95,14 +95,16 @@ public class ListFragment extends Fragment{
 			//Determine the passed string via the fragment bundle
 		} else if (last_field_option.equalsIgnoreCase("Rate")){
 			Log.d("Passed String is ", "Rate");
-			Toast.makeText(getActivity(), "To update a rating, click on the star and then click on the name of the game",Toast.LENGTH_LONG).show();
-
 		}
 
 		//Get the context to pass in
 		Context context = getActivity();
 		//Setup a listview and reference it to the listview id
 		listView = (ListView) view.findViewById(R.id.data_list_view);
+
+		//Set the background color
+		listView.setBackgroundColor(Color.GRAY);
+
 		//Set the custom adapter to the listview
 		listView.setAdapter(new CustomAdapter(context, lists_of_records, main_db));
 
@@ -188,9 +190,13 @@ public class ListFragment extends Fragment{
 
 			holder.tv_game_name = (TextView) rowView.findViewById(R.id.custom_list_view_game_name);
 			holder.tv_game_name.setMaxWidth((int)(dpWidth)*(30/100));
+			holder.tv_game_name.setTextColor(Color.RED);
+			holder.tv_game_name.setPadding(5,0,5,0);
 
 			holder.tv_console_name = (TextView) rowView.findViewById(R.id.custom_list_view_console);
 			holder.tv_console_name.setMaxWidth((int) (dpWidth)*(35/100));
+			holder.tv_console_name.setTextColor(Color.BLUE);
+			holder.tv_console_name.setPadding(5,0,0,0);
 
 			holder.bottom_left = (LinearLayout) rowView.findViewById(R.id.left_layout);
 
@@ -223,18 +229,6 @@ public class ListFragment extends Fragment{
 
 				holder.tv_bottom.setGravity(Gravity.LEFT); //Set text to center so it aligns better
 				holder.ratingBar.setPadding(5, 5, 5, 5);
-
-				/*
-				bottom_right_params.width = (int) ((dpWidth)*(15/100));
-				holder.bottom_right.setLayoutParams(bottom_right_params);
-
-				bottom_left_params.width = (int) ((dpWidth)*(85/100));
-				holder.bottom_left.setLayoutParams(bottom_left_params);
-				*/
-
-
-
-
 
 				holder.tv_bottom.setText("Rate the game,\nthen click here");
 			}
@@ -322,46 +316,44 @@ public class ListFragment extends Fragment{
 						}
 					});
 
-					/*
-					//Set the checkbox listener so if they add something it will change the database
-					holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-						//If they check it, update the database
-						public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-							TheDatabase db = new TheDatabase(context);
-							if (isChecked){
-								db.updatePlayedCheckbox(passed_game_id, "true");
-							} else {
-								db.updatePlayedCheckbox(passed_game_id, "false");
-							}
-
-							//Close the database to prevent memory leaks
-							try {
-								db.close();
-							} catch (Exception e){
-								e.printStackTrace();
-							}
-						}
-					});
-					*/
-
-
 
 				} else if (last_field_option.equalsIgnoreCase("Rate")){
+					//Get the rating on the game
+					String rating1 = temp_list.get(15);
+					//Just in case there are more significant figures, trim down to the first character (IE 1.0 vs 1)
+					rating1 = rating1.substring(0, Math.min(rating1.length(), 1));
+					//If the value is not a mistake, set the rating in the view window
+					if (rating1.equalsIgnoreCase("-1.0")){
+						Log.d("Rating negative on Game: ", passed_game_id);
+					} else {
+						holder.ratingBar.setRating(Integer.parseInt(rating1));
+					}
 
-					String rating = temp_list.get(15);
-					holder.ratingBar.setRating(Integer.parseInt(rating));
+					/*
+					Set the rating bar to an on click listener. If the user chooses a rating, it
+					passes the score into the database for the respective game
+					 */
 					holder.ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-						//Handles the rating changes
 						public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
 
-							float score = rating;
+							int score = (int) rating;
 							if (score > 4){
 								score = 4; //To prevent out of bounds issues
 							}
 
-							//Set the game rating to the score they chose
-							game_rating = (int) score;
+							int score_to_add_to_db = score;
+
+							String game_id = passed_game_id;
+
+							try {
+								db.updateRating(game_id, score_to_add_to_db);
+								Log.d("Database ", "Updated Successfully with a rating of: " + score_to_add_to_db);
+
+							} catch (Error e){
+								e.printStackTrace();
+								Log.d("Database ", "Was NOT updated with rating of: " + score_to_add_to_db);
+							}
+
 						}
 					});
 				}
@@ -372,7 +364,7 @@ public class ListFragment extends Fragment{
 				//MOVE THE ON CLICK LISTENER WITHIN THE IF STATEMENTS
 
 
-
+				/*
 				rowView.setOnClickListener(new View.OnClickListener() {
 
 					public void onClick(View v) {
@@ -402,6 +394,8 @@ public class ListFragment extends Fragment{
 
 					}
 				});
+
+				*/
 			}
 
 

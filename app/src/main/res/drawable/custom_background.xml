@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="rectangle">
+    <gradient
+        android:startColor="#e4ebf5"
+        android:endColor="#c6e2ff"
+        android:angle="270"/>
+
+    <!-- Starting color is a light grey (nearly white)
+    Good looking blue variants for the end color:
+    #1975d1
+    #2979ff
+    #448aff -
+    #c6e2ff
+    -->
+    <corners
+        android:bottomRightRadius="12dp"
+        android:bottomLeftRadius="12dp"
+        android:topLeftRadius="12dp"
+        android:topRightRadius="12dp"/>
+</shape> 

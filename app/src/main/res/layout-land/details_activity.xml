@@ -69,24 +69,30 @@
             android:layout_alignParentStart="true"/>
     </ScrollView>
 
+
+
     <RatingBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/details_activity_ratingBar"
-        android:isIndicator="true"
         android:layout_alignParentBottom="true"
+        android:numStars="5"
+        android:isIndicator="true"
+        android:stepSize="1"
         android:layout_alignParentEnd="true"/>
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Game Played"
+        android:gravity="center"
         android:isIndicator="true"
         android:id="@+id/details_activity_checkbox"
         android:layout_alignBottom="@+id/details_activity_ratingBar"
         android:layout_alignParentStart="true"
         android:layout_alignTop="@+id/details_activity_ratingBar"
-        android:layout_toStartOf="@+id/details_activity_ratingBar"/>
+        android:layout_toStartOf="@+id/details_activity_ratingBar"
+        android:layout_alignEnd="@+id/centering_piece"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -100,5 +106,7 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/centering_piece"
         android:layout_alignParentEnd="true"/>
+
+
 
 </RelativeLayout>

@@ -1,7 +1,9 @@
 package com.pgmacdesign.myvideogames;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -28,6 +31,7 @@ import com.pgmacdesign.myvideogames.volley.VolleySingleton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
 This class allows users to add a new game to the database
@@ -57,8 +61,13 @@ public class AddNewGameFragment extends Fragment{
 	//Edit Texts, where the user can enter the game names
 	EditText edit_text_game_name, edit_text_console_name;
 
+	String[] facts;
+
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		//This Array will be used to show when the user presses the add game button
+		facts = getActivity().getResources().getStringArray(R.array.video_game_facts);
 	}
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,13 +80,25 @@ public class AddNewGameFragment extends Fragment{
 
 		//Set the button up and initiate its onclicklistener
 		this.add_new_game = (Button) view.findViewById(R.id.add_game_button);
+		/*
+		When the button is clicked, it sends a search request to the server with the data in the
+		respective boxes and then pulls the results, parses them, and displays them for the user
+		to choose from. If it is a game they actually want to add, clicking that listview item will
+		then add the game to their database
+		 */
 		this.add_new_game.setOnClickListener(new View.OnClickListener() {
 			//This will take the input data and search the web for the respective game
 			public void onClick(View v) {
 				//Disables the button in case they click it multiple times
 				add_new_game.setEnabled(false);
 
-				Toast.makeText(getActivity(), "Loading your results now, please be patient...", Toast.LENGTH_LONG).show();
+				//These 4 lines of code hide the keyboard when the user presses the button
+				InputMethodManager inputManager = (InputMethodManager)
+						getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+				inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+						InputMethodManager.HIDE_NOT_ALWAYS);
+
+				Toast.makeText(getActivity(), "Loading your results now", Toast.LENGTH_LONG).show();
 
 				String game_name = edit_text_game_name.getText().toString();
 				String console_name = edit_text_console_name.getText().toString();
@@ -107,8 +128,6 @@ public class AddNewGameFragment extends Fragment{
 
 						//New async task to run in the background. Pass in the 2 strings
 						new GameSearch(getActivity(), game_name, console_name).execute();
-
-						Log.d("Async ", "Should have hit");
 					}
 				}
 			}
@@ -237,6 +256,47 @@ public class AddNewGameFragment extends Fragment{
 		// can use UI thread here
 		protected void onPostExecute(final Void unused) {
 
+			Handler handler0 = new Handler();
+			//Adds a short delay in order to allow for the internet to catch up
+			handler0.postDelayed(new Runnable() {
+				public void run() {
+					try {
+						//Choose a random fact from the string array
+						String randomStr = facts[new Random().nextInt(facts.length)];
+
+						//Setup a Dialog popup to entertain the user for the 10 remaining seconds
+						/*
+						(Side note, people's attention spans have gotten bad as even I need something
+						to entertain me for 10 seconds these days... I should probably read more.
+						 */
+						DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								switch (which) {
+									//If they hit close, it will dismiss this dialog box
+									case DialogInterface.BUTTON_NEGATIVE:
+										try {
+											dialog.dismiss();
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+										break;
+								}
+							}
+						};
+						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+						builder.setTitle("This may take up to 10 seconds, so here is a random fact:");
+						builder.setMessage(randomStr).setNegativeButton("Close", dialogClickListener).show();
+
+					} catch (NullPointerException e){
+						Toast.makeText(context, "Oops! Something went wrong! Please check your internet connection and try again",Toast.LENGTH_SHORT).show();
+						e.printStackTrace();
+					}
+
+					//
+				}
+			}, (1000*1));
+
+
 			Handler handler = new Handler();
 			//Adds a short delay in order to allow for the internet to catch up
 			handler.postDelayed(new Runnable() {
@@ -247,13 +307,13 @@ public class AddNewGameFragment extends Fragment{
 						//need to now update the listview with the new info. reference the video games object above
 						userMakesChoice(search_videogames, async_console_name);
 					} catch (NullPointerException e){
-						Toast.makeText(context, "Oops! Something went wrong! Please check your internet connection and try again",Toast.LENGTH_SHORT).show();
+						Toast.makeText(context, "Oops! Something went wrong! The server did not respond in time, try clicking once more",Toast.LENGTH_LONG).show();
 						e.printStackTrace();
 					}
 
 					//
 				}
-			}, (1000*5));
+			}, (1000*11));
 
 		}
 	}//AsyncTask
@@ -278,6 +338,7 @@ public class AddNewGameFragment extends Fragment{
 			int platforms = -1;
 			//This try catch is to run because the for loop keeps breaking due to badly designed JSON on the server side
 			try {
+				if (search_videogames.results[i].platforms.length != 0)  //Check here if no games are showing up
 				platforms = search_videogames.results[i].platforms.length;
 			} catch (NullPointerException e){
 				e.printStackTrace();
@@ -310,7 +371,7 @@ public class AddNewGameFragment extends Fragment{
 
 		//Just in case...
 		if (search_game_list.size() == 0){
-			search_game_list.add("Oops! No results turned up! Try entering in the console name differently (IE Playstation instead of Playstation 1)");
+			search_game_list.add("Oops! No results turned up! Try entering in the console name differently (IE PS1 instead of Playstation 1)");
 			search_game_list_id.add(-1);
 		}
 
@@ -318,23 +379,31 @@ public class AddNewGameFragment extends Fragment{
 		ArrayAdapter<String> arrayAdapter =
 				new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, search_game_list);
 		//Create the listview
-		ListView listView = (ListView) getActivity().findViewById(R.id.add_game_listview);
+		final ListView listView = (ListView) getActivity().findViewById(R.id.add_game_listview);
+
 		//Set the datapter
 		listView.setAdapter(arrayAdapter);
-
-		//Custom item click listener that will utilize the data chosen and move onward
+		listView.setClickable(true);
+		/*
+		This item click listener manages the list view. When the user chooses a video game from
+		the list, it is added to their database of video games
+		 */
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+				//Set the list to unclickable whenever they press it so that they cannot hit it multiple times
+				listView.setClickable(false);
 
 				//Position chosen will match the position of the lists created above.
 				int gameID = search_game_list_id.get(position);
 
+				//For debugging purposes
 				Log.d("ID Chosen", Integer.toString(gameID));
 
 				//If ID is -1, then they clicked on the "oops" error, skip it
 				if (gameID == -1){
-					//Do nothing
+					Toast.makeText(getActivity(), "That game may not be correct, try a different one perhaps?", Toast.LENGTH_LONG).show();
+					listView.setClickable(true);
 				} else {
 					//Get the game details from the server, set it into the list, and add it to the database
 					new SetGame(gameID, getActivity()).execute();
@@ -346,9 +415,9 @@ public class AddNewGameFragment extends Fragment{
 
 
 	/*
-Second Async task. This is run in order to query the web server, pull data, parse it, compare it, load it up
-for the addition to the database, and then run switch back to the ListGamesActivity if successful
- */
+	Second Async task. This is run in order to query the web server, pull data, parse it, compare it, load it up
+	for the addition to the database, and then run switch back to the ListGamesActivity if successful
+	*/
 	private class SetGame extends AsyncTask<String, Long, Void> {
 
 		//Game ID (IE 13048)
@@ -413,20 +482,12 @@ for the addition to the database, and then run switch back to the ListGamesActiv
 			return null;
 		}
 
-		// periodic updates - it is OK to change UI
-		@Override
-		protected void onProgressUpdate(Long... value) {
-			super.onProgressUpdate(value);
-			//editText.append("\nworking..." + value[0] + " Seconds"); //Update an editText field if need be here
-		}
-
 		// can use UI thread here
 		protected void onPostExecute(final Void unused) {
 
 
-
-			Handler handler2 = new Handler();
 			//Adds a short delay in order to allow for the internet to catch up
+			Handler handler2 = new Handler();
 			handler2.postDelayed(new Runnable() {
 				public void run() {
 					try {
@@ -443,8 +504,8 @@ for the addition to the database, and then run switch back to the ListGamesActiv
 				}
 			}, (1000*3));
 
-			Handler handler3 = new Handler();
 			//Adds a short delay in order to allow for the internet to catch up
+			Handler handler3 = new Handler();
 			handler2.postDelayed(new Runnable() {
 				public void run() {
 					try {

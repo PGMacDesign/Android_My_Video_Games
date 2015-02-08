@@ -28,7 +28,6 @@ public class ListGamesActivity extends ActionBarActivity {
 		setContentView(R.layout.empty_activity);
 
 		ActionBarActivity actionBar = new ActionBarActivity();
-
 		actionBar.getSupportActionBar();
 
 		//Fragment manager
@@ -44,7 +43,7 @@ public class ListGamesActivity extends ActionBarActivity {
 		bundle.putString("last_field_option", "List");
 		list_fragment.setArguments(bundle);
 		transaction.add(R.id.empty_view, list_fragment, "list");
-		transaction.addToBackStack("backstack");
+		//transaction.addToBackStack("backstack");
 		transaction.commit();
 
 	}
@@ -85,7 +84,7 @@ public class ListGamesActivity extends ActionBarActivity {
 			 */
 			AddNewGameFragment addNewGameFragment = new AddNewGameFragment();
 			FragmentTransaction transaction = manager.beginTransaction();
-			transaction.replace(R.id.empty_view, addNewGameFragment, "List");
+			transaction.add(R.id.empty_view, addNewGameFragment, "List");
 			transaction.addToBackStack("backstack");
 			transaction.commit();
 			return true;
