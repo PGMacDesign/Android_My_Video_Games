@@ -19,24 +19,18 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.pgmacdesign.myvideogames.database.TheDatabase;
 import com.pgmacdesign.myvideogames.gson.DeserializeRequest;
 import com.pgmacdesign.myvideogames.gson.jsonobjects.VideoGames;
-import com.pgmacdesign.myvideogames.volley.VolleySingleton;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 /**
-This class allows users to add a new game to the database
+ This class allows users to add a new game to the database
  */
-public class AddNewGameFragment extends Fragment{
+public class AddNewGameFragment2 extends Fragment{
 
 	//Button to add a new game
 	Button add_new_game;
@@ -62,6 +56,8 @@ public class AddNewGameFragment extends Fragment{
 	EditText edit_text_game_name, edit_text_console_name;
 
 	String[] facts;
+
+	String search_response0, set_response0;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -103,11 +99,19 @@ public class AddNewGameFragment extends Fragment{
 				String game_name = edit_text_game_name.getText().toString();
 				String console_name = edit_text_console_name.getText().toString();
 
+				if (game_name.equalsIgnoreCase("") || console_name.equalsIgnoreCase("")){
+				}  else {
+					if (game_name == null || console_name == null){
+					} else {
+
+					}
+				}
 				//Check to make sure first that they typed something in
 				if (game_name != null || console_name != null){
-					//Also make sure it is not just empty space
 					if (game_name.equalsIgnoreCase("") || console_name.equalsIgnoreCase("")) {
+						add_new_game.setEnabled(false);
 					} else {
+
 
 						int length = game_name.length();
 						//If the String ends with a whitespace (IE the auto complete helped out), delete the whitespace
@@ -128,7 +132,49 @@ public class AddNewGameFragment extends Fragment{
 
 						//New async task to run in the background. Pass in the 2 strings
 						new GameSearch(getActivity(), game_name, console_name).execute();
+
+						Handler handler0 = new Handler();
+						//Adds a short delay in order to allow for the internet to catch up
+						handler0.postDelayed(new Runnable() {
+							public void run() {
+								try {
+									//Choose a random fact from the string array
+									String randomStr = facts[new Random().nextInt(facts.length)];
+
+									//Setup a Dialog popup to entertain the user for the seconds until the server response comes
+									/*
+									(Side note, people's attention spans have gotten bad as even I need something
+									to entertain me for 10 seconds these days... I should probably read more.
+									 */
+									DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog, int which) {
+											switch (which) {
+												//If they hit close, it will dismiss this dialog box
+												case DialogInterface.BUTTON_NEGATIVE:
+													try {
+														dialog.dismiss();
+													} catch (Exception e) {
+														e.printStackTrace();
+													}
+													break;
+											}
+										}
+									};
+									AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+									builder.setTitle("This may take up to 10 seconds, so here is a random fact:");
+									builder.setMessage(randomStr).setNegativeButton("Close", dialogClickListener).show();
+
+								} catch (NullPointerException e){
+									Toast.makeText(getActivity(), "Oops! Something went wrong! Please check your internet connection and try again",Toast.LENGTH_SHORT).show();
+									e.printStackTrace();
+								}
+
+								//
+							}
+						}, (1000*1));
 					}
+				} else {
+					add_new_game.setEnabled(false);
 				}
 			}
 		});
@@ -181,7 +227,7 @@ public class AddNewGameFragment extends Fragment{
 	private class GameSearch extends AsyncTask<String, Long, Void> {
 
 		private String async_game_name;
-		private String search_response;
+		//private String search_response;
 		private VideoGames search_videogames;
 		private Context context;
 		private String async_console_name;
@@ -206,114 +252,28 @@ public class AddNewGameFragment extends Fragment{
 			String web_url = "http://www.giantbomb.com/api/search/?api_key=9be0ead91d814eeb64cc5fb0da481ce726a22400&query=";
 			web_url += async_game_name + "&field_list=name,id,platforms&format=json";
 
-			RequestQueue requestQueue = VolleySingleton.getsInstance().getmRequestQueue(); //This is utilizing the singleton
-
 			try {
-				//One big StringRequest object. Sets the search_response string to the returned data
-				StringRequest request = new StringRequest(Request.Method.GET, web_url, new Response.Listener<String>() {
-					public void onResponse(String response) {
-						//Get the response from the server (It will be a string)
-						search_response = response;
-						//Deserialize the string and add the data to the object
-						search_videogames = DeserializeRequest.deserializeTheJSON(search_videogames, search_response);
-						Log.d("RESPONSE", response);
-						//Set it equal to the global object so we can access it in the onItemClickListener
-						videoGames_search_object = search_videogames;
-
-						//need to now update the listview with the new info. reference the video games object above
-						//userMakesChoice(search_videogames, async_console_name);
-
-					}
-				}, new Response.ErrorListener() {
-					public void onErrorResponse(VolleyError error) {
-						try {
-							Log.d("ERROR", error.getMessage());
-						} catch (NullPointerException e){
-							Toast.makeText(context, "Oops! Something went wrong! Please check your internet connection and try again",Toast.LENGTH_SHORT).show();
-							e.printStackTrace(); //In case there is a server glitch from their api
-						}
-					}
-				});
-
-				//Add it to the request queue
-				requestQueue.add(request);
-
+				ServerRequest sr = new ServerRequest();
+				search_response0 = sr.makeServiceCall(web_url, 1);
 			} catch (Exception e){
-				Toast.makeText(context, "Oops! Something went wrong! Please check your internet connection and try again",Toast.LENGTH_SHORT).show();
 				e.printStackTrace();
 			}
 
 			return null;
 		}
 
-		// periodic updates - it is OK to change UI
-		@Override
-		protected void onProgressUpdate(Long... value) {
-			super.onProgressUpdate(value);
-			//editText.append("\nworking..." + value[0] + " Seconds"); //Update an editText field if need be here
-		}
-
 		// can use UI thread here
 		protected void onPostExecute(final Void unused) {
 
-			Handler handler0 = new Handler();
-			//Adds a short delay in order to allow for the internet to catch up
-			handler0.postDelayed(new Runnable() {
-				public void run() {
-					try {
-						//Choose a random fact from the string array
-						String randomStr = facts[new Random().nextInt(facts.length)];
 
-						//Setup a Dialog popup to entertain the user for the 10 remaining seconds
-						/*
-						(Side note, people's attention spans have gotten bad as even I need something
-						to entertain me for 10 seconds these days... I should probably read more.
-						 */
-						DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int which) {
-								switch (which) {
-									//If they hit close, it will dismiss this dialog box
-									case DialogInterface.BUTTON_NEGATIVE:
-										try {
-											dialog.dismiss();
-										} catch (Exception e) {
-											e.printStackTrace();
-										}
-										break;
-								}
-							}
-						};
-						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-						builder.setTitle("This may take up to 10 seconds, so here is a random fact:");
-						builder.setMessage(randomStr).setNegativeButton("Close", dialogClickListener).show();
+			//Deserialize the string and add the data to the object
+			search_videogames = DeserializeRequest.deserializeTheJSON(search_videogames, search_response0);
+			Log.d("RESPONSE", search_response0);
+			//Set it equal to the global object so we can access it in the onItemClickListener
+			videoGames_search_object = search_videogames;
 
-					} catch (NullPointerException e){
-						Toast.makeText(context, "Oops! Something went wrong! Please check your internet connection and try again",Toast.LENGTH_SHORT).show();
-						e.printStackTrace();
-					}
-
-					//
-				}
-			}, (1000*1));
-
-
-			Handler handler = new Handler();
-			//Adds a short delay in order to allow for the internet to catch up
-			handler.postDelayed(new Runnable() {
-				public void run() {
-					try {
-						//Re-enable the button
-						add_new_game.setEnabled(true);
-						//need to now update the listview with the new info. reference the video games object above
-						userMakesChoice(search_videogames, async_console_name);
-					} catch (NullPointerException e){
-						Toast.makeText(context, "Oops! Something went wrong! The server did not respond in time, try clicking once more",Toast.LENGTH_LONG).show();
-						e.printStackTrace();
-					}
-
-					//
-				}
-			}, (1000*1)); //Changed back from 11
+			add_new_game.setEnabled(true);
+			userMakesChoice(search_videogames, async_console_name);
 
 		}
 	}//AsyncTask
@@ -339,7 +299,7 @@ public class AddNewGameFragment extends Fragment{
 			//This try catch is to run because the for loop keeps breaking due to badly designed JSON on the server side
 			try {
 				if (search_videogames.results[i].platforms.length != 0)  //Check here if no games are showing up
-				platforms = search_videogames.results[i].platforms.length;
+					platforms = search_videogames.results[i].platforms.length;
 			} catch (NullPointerException e){
 				e.printStackTrace();
 			}
@@ -447,7 +407,7 @@ public class AddNewGameFragment extends Fragment{
 
 			try {
 				ServerRequest sr = new ServerRequest();
-				game_response = sr.makeServiceCall(web_url, 2);
+				set_response0 = sr.makeServiceCall(web_url, 1);
 
 
 				/*
@@ -504,61 +464,82 @@ public class AddNewGameFragment extends Fragment{
 		// can use UI thread here
 		protected void onPostExecute(final Void unused) {
 
-			//Deserialize the string and add the data to the object
-			async2_video_games = DeserializeRequest.deserializeTheJSON(async2_video_games, game_response);
-			Log.d("RESPONSE", game_response);
-			//Set it equal to the global object so we can access it in the onItemClickListener
-			videoGames_game_object = async2_video_games;
-
-			//Adds a short delay in order to allow for the internet to catch up
-			Handler handler2 = new Handler();
-			handler2.postDelayed(new Runnable() {
-				public void run() {
-					try {
-
-						//Put the data into the database
-						returned_int = putDataInDatabase(async2_video_games);
-
-					} catch (NullPointerException e){
-						Toast.makeText(context, "Oops! Something went wrong! Please check your internet connection and try again",Toast.LENGTH_SHORT).show();
-						e.printStackTrace();
-					}
-
-					//
-				}
-			}, (1000*3));
-
-			//Adds a short delay in order to allow for the internet to catch up
-			Handler handler3 = new Handler();
-			handler2.postDelayed(new Runnable() {
-				public void run() {
-					try {
-
-						if (returned_int == -1){
-							Toast.makeText(context, "Oops! Something went wrong! wait a moment and click the game title again",Toast.LENGTH_SHORT).show();
-						} else {
-							try {
-								//Launch the fragment
-								getFragmentManager().popBackStack();
-							} catch (Exception e){
-								Log.d("Could not", " Pop backstack");
-								e.printStackTrace();
-							}
-						}
-
-
-					} catch (NullPointerException e){
-						Toast.makeText(context, "Oops! Something went wrong! wait a moment and try again",Toast.LENGTH_SHORT).show();
-						e.printStackTrace();
-					}
-
-					//
-				}
-			}, (1000*6));
+			Log.d("467", set_response0);
+			new DeserializeALLTheThings(context, set_response0, async2_video_games).execute();
 
 
 		}
 	}//AsyncTask
+
+	/*
+	Third async task. This deserializes the data using GSON. It isn't really necessary, but, there is
+	really no harm in letting the process run on a background thread vs the UI thread
+	 */
+	private class DeserializeALLTheThings extends AsyncTask<Void, Void, Void>{
+
+		private VideoGames videoGames_deserialize;
+		private String das_response;
+		private Context context;
+
+		public DeserializeALLTheThings(Context context, String str, VideoGames vg){
+			das_response = str;
+			videoGames_deserialize = vg;
+			this.context = context;
+		}
+
+		protected Void doInBackground(Void... params) {
+			videoGames_deserialize = DeserializeRequest.deserializeTheJSON(videoGames_deserialize, das_response);
+			Log.d("491", "fired");
+			videoGames_game_object = videoGames_deserialize;
+
+			return null;
+		}
+
+		protected void onPostExecute(Void aVoid) {
+
+			new PassToDatabase(videoGames_deserialize, context).execute();
+
+			super.onPostExecute(aVoid);
+		}
+	}
+
+
+	/*
+	Fourth async task. This sets the data to the database and then when finished, pops back to the
+	previous screen by passing to a new one
+	*/
+	private class PassToDatabase extends AsyncTask<String, Long, Void> {
+
+		private VideoGames db_video_games;
+		private Context context;
+
+		public PassToDatabase(VideoGames vg, Context context){
+			this.db_video_games = vg;
+			this.context = context;
+		}
+
+		// automatically done on worker thread (separate from UI thread)
+		protected Void doInBackground(final String... args) {
+
+
+			//Put the data into the database
+			long returned_long = putDataInDatabase(db_video_games);
+
+			return null;
+		}
+
+		// can use UI thread here
+		protected void onPostExecute(final Void unused) {
+
+			//Pop back to the previous fragment
+			getFragmentManager().popBackStack();
+
+		}
+	}//AsyncTask
+
+
+
+
 
 	//This class will put the data into the database. Returns the row number of the row put into
 	private long putDataInDatabase(VideoGames videogames_database_info){

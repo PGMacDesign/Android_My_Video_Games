@@ -82,7 +82,7 @@ public class ListGamesActivity extends ActionBarActivity {
 			This creates a new transaction, opens up a new fragment, covering up the one on screen
 			and opens up one where the user can add a new game to the list
 			 */
-			AddNewGameFragment addNewGameFragment = new AddNewGameFragment();
+			AddNewGameFragment2 addNewGameFragment = new AddNewGameFragment2(); //FIX IT HERE WHEN UPDATE
 			FragmentTransaction transaction = manager.beginTransaction();
 			transaction.add(R.id.empty_view, addNewGameFragment, "List");
 			transaction.addToBackStack("backstack");
