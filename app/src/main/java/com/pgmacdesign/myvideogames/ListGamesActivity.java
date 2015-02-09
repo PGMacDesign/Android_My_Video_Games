@@ -1,8 +1,11 @@
 package com.pgmacdesign.myvideogames;
 
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -29,6 +32,44 @@ public class ListGamesActivity extends ActionBarActivity {
 
 		ActionBarActivity actionBar = new ActionBarActivity();
 		actionBar.getSupportActionBar();
+
+		/*
+		Using Shared Preferences to determine if the app has been opened before or if this is
+		the first time. If not, do a dialog popup explaining how to delete records. If it is not,
+		simply ignore it and continue to inflate the screen.
+		 */
+		final String PREFS_NAME = "MyPrefsFile";
+		SharedPreferences settings = this.getSharedPreferences(PREFS_NAME, 0);
+		if (settings.getBoolean("my_first_time", true)) {
+			//the app is being launched for first time, do something
+			Log.d("Comments", "First time");
+
+			// first time task
+			//Dialog popup, telling them how to delete a record
+			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					switch (which) {
+						//If they hit close, it will dismiss this dialog box
+						case DialogInterface.BUTTON_NEGATIVE:
+							try {
+								dialog.dismiss();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							break;
+					}
+				}
+			};
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Did you know?");
+			builder.
+					setMessage("To Delete a game from your library, simply long-press on the game platform / console").
+					setNegativeButton("Ok", dialogClickListener).
+					show();
+
+			// record the fact that the app has been started at least once
+			settings.edit().putBoolean("my_first_time", false).commit();
+		}
 
 		//Fragment manager
 		manager = getFragmentManager();

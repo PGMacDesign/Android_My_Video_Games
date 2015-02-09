@@ -51,10 +51,14 @@ public class AddNewGameFragment2 extends Fragment{
 
 	//Spinner spinner;
 
+	//List of fun facts and consoles
 	String[] facts;
 	String[] consoles;
 
+	//Some global strings
 	String search_response0, set_response0, console_choice;
+
+	ListView listView;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -106,6 +110,9 @@ public class AddNewGameFragment2 extends Fragment{
 			public void onClick(View v) {
 				//Disables the button in case they click it multiple times
 				add_new_game.setEnabled(false);
+
+				//Clear the list of game IDs so no residuals carry over
+				search_game_list_id.clear();
 
 				//These 4 lines of code hide the keyboard when the user presses the button
 				InputMethodManager inputManager = (InputMethodManager)
@@ -259,6 +266,7 @@ public class AddNewGameFragment2 extends Fragment{
 			try {
 				ServerRequest sr = new ServerRequest();
 				search_response0 = sr.makeServiceCall(web_url, 1);
+
 			} catch (Exception e){
 				e.printStackTrace();
 			}
@@ -287,6 +295,9 @@ public class AddNewGameFragment2 extends Fragment{
 	private void userMakesChoice(VideoGames search_videogames, String console_choice) {
 		//Fill the List with data to add to the listview
 		List<String> search_game_list = new ArrayList<>();
+
+		//First, clear the list in case there were other ones previously:
+		search_game_list.clear();
 
 		//Fill the search game list with items from the video game object
 		for(int i = 0; i < search_videogames.results.length; i++){
@@ -386,7 +397,7 @@ public class AddNewGameFragment2 extends Fragment{
 		ArrayAdapter<String> arrayAdapter =
 				new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, search_game_list);
 		//Create the listview
-		final ListView listView = (ListView) getActivity().findViewById(R.id.add_game_listview);
+		listView = (ListView) getActivity().findViewById(R.id.add_game_listview);
 
 		//Set the datapter
 		listView.setAdapter(arrayAdapter);
@@ -549,8 +560,13 @@ public class AddNewGameFragment2 extends Fragment{
 
 		//Create a list of all the data to input into the database from the VideoGames Object
 		String db_game_id = Integer.toString(videogames_database_info.results[0].game_id);
+
 		String db_aliases = videogames_database_info.results[0].aliases;
+		db_aliases = fixNullString(db_aliases);
+
 		String db_deck = videogames_database_info.results[0].deck;
+		db_deck = fixNullString(db_deck);
+
 		String db_icon_url = videogames_database_info.results[0].game_image.icon_url;
 		db_icon_url = formatTheBadURL(db_icon_url);
 		String db_medium_url = videogames_database_info.results[0].game_image.medium_url;
@@ -565,7 +581,10 @@ public class AddNewGameFragment2 extends Fragment{
 		db_thumb_url = formatTheBadURL(db_thumb_url);
 		String db_tiny_url = videogames_database_info.results[0].game_image.tiny_url;
 		db_tiny_url = formatTheBadURL(db_tiny_url);
+
 		String db_name = videogames_database_info.results[0].game_name;
+		db_name = fixNullString(db_name);
+
 		//Shortening this one as it adds seconds afterwards (semi-useless here)
 		String str = videogames_database_info.results[0].original_release_date;
 		String db_original_release_date;
@@ -574,8 +593,12 @@ public class AddNewGameFragment2 extends Fragment{
 		} else {
 			db_original_release_date = "N/A";
 		}
+
 		String db_platform_name = videogames_database_info.results[0].platforms[0].system_name;
+		db_platform_name = fixNullString(db_platform_name);
+
 		String db_platform_abbreviation = videogames_database_info.results[0].platforms[0].abbreviation;
+		db_platform_abbreviation = fixNullString(db_platform_abbreviation);
 
 		//Add the data to a list
 		List<String> input_data = new ArrayList<>();
@@ -621,9 +644,19 @@ public class AddNewGameFragment2 extends Fragment{
 	//This formats the badly formed URL links. Not sure why the site owners returned it that way
 	private String formatTheBadURL(String db_icon_url) {
 		String return_url;
-		return_url = db_icon_url.replaceAll("\\\\", "");
+		return_url = fixNullString(db_icon_url);
+		return_url = return_url.replaceAll("\\\\", "");
 		Log.d("Formatted String", return_url);
 		return return_url;
+	}
+
+	//Just a simple method to fix any null values passed in by the server (IE Console name)
+	private String fixNullString(String str){
+		if (str != null){
+			return str;
+		} else {
+			return "N/A";
+		}
 	}
 
 }

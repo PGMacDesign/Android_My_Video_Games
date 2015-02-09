@@ -80,31 +80,10 @@ public class ListFragment extends Fragment{
 		if (last_field_option.equalsIgnoreCase("List")){
 			Log.d("Passed String is ", "List");
 
-
 			//Check the number of records. If only 3 (Initialized by me) show delete popup
 			List<String> num_records_list = main_db.getAllGameIDs();
 			if (num_records_list.size() == 3){
-				//Dialog popup, telling them how to delete a record
-				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						switch (which) {
-							//If they hit close, it will dismiss this dialog box
-							case DialogInterface.BUTTON_NEGATIVE:
-								try {
-									dialog.dismiss();
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-								break;
-						}
-					}
-				};
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setTitle("Did you know?");
-				builder.
-						setMessage("To Delete a game from your library, simply long-press on the game platform / console").
-						setNegativeButton("Ok", dialogClickListener).
-						show();
+
 			}
 
 			//Determine the passed string via the fragment bundle
@@ -185,10 +164,8 @@ public class ListFragment extends Fragment{
 		//Custom view
 		public View getView(final int position, View convertView, ViewGroup parent) {
 
-
 			//A holder object to reference the textviews and imageviews
-			//Holder holder=new Holder();
-			holder = new Holder(); //Was holder2, may need to change
+			holder = new Holder();
 			View rowView;
 			rowView = inflater.inflate(R.layout.custom_list_view, null);
 

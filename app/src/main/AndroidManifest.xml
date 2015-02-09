@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pgmacdesign.myvideogames" >
 
+    <!--SDK Requirements -->
+    <uses-sdk
+        android:minSdkVersion="19" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,6 +19,7 @@
         android:name=".volley.MyApplication"
         android:theme="@style/AppTheme" >
 
+        <!-- Main activity. 2 Options / Buttons -->
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -24,6 +30,7 @@
             </intent-filter>
         </activity>
 
+        <!-- List games activity shows the list of their games, allows more to be added, and edits the db -->
         <activity android:name=".ListGamesActivity"
                   android:label="List Games">
 
@@ -32,6 +39,7 @@
                     android:value="com.pgmacdesign.myvideogames.MainActivity" />
                 </activity>
 
+        <!-- Rate games activity allows the user to rate the game -->
         <activity android:name=".RateGamesActivity"
                   android:label="Rate Games" >
 
@@ -40,7 +48,7 @@
                     android:value="com.pgmacdesign.myvideogames.MainActivity" />
         </activity>
 
-
+        <!-- Details activity shows more detail on their selected game -->
         <activity android:name=".DetailsActivity"
                   android:label="Game Details" >
 
@@ -48,8 +56,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pgmacdesign.myvideogames.ListGamesActivity" />
         </activity>
-
-
 
     </application>
 </manifest>

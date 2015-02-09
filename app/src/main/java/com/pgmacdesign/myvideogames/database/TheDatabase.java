@@ -44,7 +44,7 @@ public class TheDatabase {
 			List<String> list1 = new ArrayList<>();
 			//Fill list 1
 			list1.add("13053");
-			list1.add("FFVII");
+			list1.add("FFVII, FF7");
 			list1.add("A young man's quest to defeat a corrupt corporation he once served and exact revenge upon the man who wronged him, " +
 					"uncovering dark secrets about his past along the way, in the most celebrated console RPG of all time. " +
 					"It popularized the RPG genre and was a killer app for the PlayStation console.");
@@ -55,7 +55,7 @@ public class TheDatabase {
 			list1.add("http://static.giantbomb.com/uploads/scale_medium/8/87790/1814630-box_ff7.png");
 			list1.add("http://static.giantbomb.com/uploads/scale_avatar/8/87790/1814630-box_ff7.png");
 			list1.add("http://static.giantbomb.com/uploads/scale_medium/8/87790/1814630-box_ff7.png");
-			list1.add("Final Fantasy 7");
+			list1.add("Final Fantasy VII");
 			list1.add("1997-01-31");
 			list1.add("Playstation");
 			list1.add("PS1");
